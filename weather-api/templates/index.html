@@ -29,20 +29,23 @@
 
     <label for="cityInput">Enter City:</label>
     <input type="text" id="cityInput" required>
+    <label for="cityInput">Enter Country:</label>
+    <input type="text" id="countryInput" required>
     <button onclick="getWeather()">Get Weather</button>
 
     <div id="result"></div>
 
     <script>
         async function getWeather() {
-            const cityInput = document.getElementById('cityInput');
-            const cityName = cityInput.value;
+            const city = document.getElementById('cityInput').value;
+            const country=document.getElementById('countryInput').value;
 
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=YOUR_API_KEY`);
+                const response = await fetch(`http://localhost:8080//weather?city=${city}&country=${country}`);
                 const data = await response.json();
 
-                if (response.ok) {
+                if (response.ok) { 
+                    console.log("im here atleast")
                     displayWeather(data);
                 } else {
                     displayError(data.message);
