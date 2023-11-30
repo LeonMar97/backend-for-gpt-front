@@ -1,2 +1,2 @@
 # backend-for-gpt-front
-fun idea, creating backend for chatgpt random frontend
+Fun idea, creating backend for chatgpt random frontend
