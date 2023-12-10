@@ -41,13 +41,16 @@
             const country=document.getElementById('countryInput').value;
 
             try {
+                // console.log("hello1")
                 const response = await fetch(`http://localhost:8080//weather?city=${city}&country=${country}`);
+                
                 const data = await response.json();
-
-                if (response.ok) { 
-                    console.log("im here atleast")
+                
+                if (response.ok) {
+                    
                     displayWeather(data);
                 } else {
+                    console.log("wops")
                     displayError(data.message);
                 }
             } catch (error) {
@@ -56,11 +59,12 @@
         }
 
         function displayWeather(data) {
+            console.log(data)
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `
-                <h2>${data.name}, ${data.sys.country}</h2>
-                <p>Temperature: ${data.main.temp}°C</p>
-                <p>Weather: ${data.weather[0].description}</p>
+                <h2>${data.name[0]} ${data.name[1]}</h2>
+                <h2>${data.time}</h2>
+                <h2>${data.temp} °C</24>
             `;
         }
 
