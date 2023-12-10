@@ -7,6 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/")
 def main():
     return render_template("index.html")
@@ -16,18 +17,26 @@ def main():
 def weater_by_city():
     # SHOULD MAKE AN EXCEPTION FOR COUNTRY NOT FOUND
     lat, long = find_lat_long(request.args["city"], request.args["country"]).values()
+    print("lat: ", lat, "long:", long)
     weather_json = requests.get(
-        f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={long}&hourly=temperature_2m"
+        "https://api.open-meteo.com/v1/forecast",
+        params={
+            "latitude": lat,
+            "longitude": long,
+            "hourly": "temperature_2m",
+            "cell_selection": "nearest",
+        },
     ).json()
+
     print(weather_json)
     current_time_str = datetime.now()
-    
-    ret_json={
-        'name':[request.args['city'],request.args['country']],
-        'time':current_time_str.strftime("%H:%M:%S"),
-        'temp':weather_json['hourly']['temperature_2m'][current_time_str.hour]
-         }
-    
+
+    ret_json = {
+        "name": [request.args["city"], request.args["country"]],
+        "time": current_time_str.strftime("%H:%M:%S"),
+        "temp": weather_json["hourly"]["temperature_2m"][current_time_str.hour],
+    }
+
     print(current_time_str)
     return jsonify(ret_json)
 
@@ -40,6 +49,7 @@ def find_lat_long(city: str, country: str) -> dict:
         if cur_country["country"] == country.title():
             lat, long = cur_country["latitude"], cur_country["longitude"]
             return {"lat": lat, "long": long}
+
     #!!!SHOULD CREATE AN EXCEPTION RETURN FOR THAT CASE!!!!
     return {"lat": "ERROR", "long": "ERROR"}
 

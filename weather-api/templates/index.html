@@ -42,7 +42,7 @@
 
             try {
                 // console.log("hello1")
-                const response = await fetch(`http://localhost:8080//weather?city=${city}&country=${country}`);
+                const response = await fetch(`/weather?city=${city}&country=${country}`);
                 
                 const data = await response.json();
                 
