@@ -3,7 +3,9 @@ from flask_cors import CORS
 import json
 import requests
 from datetime import datetime
-
+from geopy.geocoders import Nominatim
+from timezonefinder import TimezoneFinder
+import pytz
 app = Flask(__name__)
 CORS(app)
 
@@ -12,11 +14,18 @@ CORS(app)
 def main():
     return render_template("index.html")
 
+def time_by_zone(lat:str,long:str)->datetime:
+    '''function gets lat and long, returns
+    current time as datetime object'''
+    
+    timez_str=TimezoneFinder().timezone_at(lat=lat,lng=long)
+    return datetime.now(pytz.timezone(timez_str))
 
 @app.route("/weather")
 def weater_by_city():
     # SHOULD MAKE AN EXCEPTION FOR COUNTRY NOT FOUND
-    lat, long = find_lat_long(request.args["city"], request.args["country"]).values()
+    country,city=request.args["country"],request.args["city"]
+    lat, long = find_lat_long(city, country).values()
     print("lat: ", lat, "long:", long)
     weather_json = requests.get(
         "https://api.open-meteo.com/v1/forecast",
@@ -28,16 +37,14 @@ def weater_by_city():
         },
     ).json()
 
-    print(weather_json)
-    current_time_str = datetime.now()
-
+    current_time = time_by_zone(lat=lat,long=long)
+    
     ret_json = {
         "name": [request.args["city"], request.args["country"]],
-        "time": current_time_str.strftime("%H:%M:%S"),
-        "temp": weather_json["hourly"]["temperature_2m"][current_time_str.hour],
+        "time": current_time.strftime("%H:%M:%S"),
+        "temp": weather_json["hourly"]["temperature_2m"][current_time.hour],
     }
 
-    print(current_time_str)
     return jsonify(ret_json)
 
 
